@@ -1,0 +1,80 @@
+/* ================================================================
+ *  I2C LCD C/C++ FUNCTION BLOCK
+ *
+ *  ---------------------------------------------------------------
+ *  - This I2C function block is specifically for showing the PV, QU
+ *  - and QD a CTUD setup as a car parking status indication.
+ *  - It can be modified to display any other application function
+ *  
+ *  ---------------------------------------------------------------
+ *  - This function block runs **in sync** with the PLC runtime.
+ *  - The `setup()` function is called once when the block initializes.
+ *  - The `loop()` function is called at every PLC scan cycle.
+ *  - Block input and output variables declared in the variable table
+ *    can be accessed directly by name in this C/C++ code.
+ *
+ *  This block executes as part of the main PLC process and follows
+ *  the configured scan time in the Resources. Use it for real-time
+ *  control logic, fast I/O operations, or any C-based algorithms.
+ * ================================================================ */
+
+#include <stdio.h>
+#include <stdint.h>
+#include <stdbool.h>
+
+#include <Wire.h> 
+#include <LiquidCrystal_I2C.h>
+
+LiquidCrystal_I2C lcd(0x27,16,2);           // set the LCD address to 0x27 for a 16 chars and 2 line display
+
+int Val_Data;                               //hold the VAL data to be displayed on the LCD
+long rememberTime = 0;                      //keeps track of the VAL data update time
+const long duration = 1000;                 //determines the updating of the VAL data on the LCD
+
+void setup()
+{
+  Wire.begin(17, 18);                       //I2C_SDA --> GPIO17 and I2C_SCL -->GPIO18
+  lcd.init();                               // initialize the lcd 
+  lcd.init();
+
+  lcd.backlight();                          //turn LCD backlight
+  lcd.setCursor(0,0);                       //display "INDICATOR:" at column 0, row 0 of the LCD
+  lcd.print("CAR SPACE: ");  
+  lcd.setCursor(0,1);                       //display "VAL:" at column 0, row 1 of the LCD
+  lcd.print("COUNT: ");
+
+  Val_Data = VAL;                           //retrieve and print initial VAL data
+  lcd.print(Val_Data);                      
+}
+
+void loop()
+{
+
+  if (millis() - rememberTime >= duration) { // Check if the defined time interval has passed
+    rememberTime = millis();                 // Update the last execution time to the current time
+
+    // ----------- Update Status on Row 0 -----------
+    lcd.setCursor(11, 0);                    // Move cursor to column 11, row 0
+
+    // Display status based on conditions
+    if (VAL_HIGH) {
+      lcd.print("FULL ");                    // Display "FULL" if high condition is true
+    } 
+    else if (VAL_LOW) {
+      lcd.print("EMPTY");                    // Display "EMPTY" if low condition is true
+    } 
+    else {
+      lcd.print("AVAL ");                    // Display "AVAL" if neither condition is true
+    }
+
+    // ----------- Update Count on Row 1 -----------
+    if (Val_Data != VAL) {
+      Val_Data = VAL;                           // Read the latest value from the PLC variable
+
+      lcd.setCursor(7, 1);                      // Move cursor to column 7, row 1
+      lcd.print("     ");                       // Clear previous number by overwriting with spaces
+      lcd.setCursor(7, 1);                      // Reset cursor again to the same position
+      lcd.print(Val_Data);                      // Print the updated value
+    }                       
+  }
+}
