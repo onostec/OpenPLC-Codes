@@ -1,5 +1,4 @@
 #include <Arduino.h>
-//#include <Wire.h>
 #include <PCF8574.h>
 
 // PCF8574 input address
