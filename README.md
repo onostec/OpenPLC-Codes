@@ -15,3 +15,9 @@ Learn how to create custom function blocks in OpenPLC using C/C++ and display li
 https://youtu.be/VO0E_Ce5HG4
 
 The tutorial shows how to overcome the limitations of the PCF8574 I2C mapping in the OpenPLC editor. Whether you’re a student or an Industry 4.0 professional, this guide will help you build a fully functional, low-cost PLC system with 8 relays and multiple digital/analog inputs.
+
+**Unlock 100% of your Kincony KC868-A8 in OpenPLC: Custom I/O Fix**
+https://youtu.be/8iWrShNTFSU
+
+Stop struggling with "blind" inputs! In this tutorial, we dive deep into the Kincony KC868-A8 board to unlock all 8 inputs and 8 outputs using a simple C++ fix in OpenPLC. Whether you are building an industrial logic or an advanced home automation system, this step-by-step guide will get your ESP32 talking to the PCF8574 expander perfectly.
+
